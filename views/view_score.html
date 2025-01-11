@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authority Scores</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .authority-card {
+            background-color: #d6fa67; /* Light green background */
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .authority-score {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: white;
+            color: black;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .authority-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            flex-grow: 1;
+            text-align: left;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+
+<body style="background-color: #f4f7fa;">
+    <div class="container mt-6">
+        <h2 class="text-center mb-4">Authority Scores</h2>
+
+        <div class="row">
+            <!-- Authority Score Cards -->
+            <!--{% for authority in authorities %}-->
+            <div class="col-md-4">
+                <div class="authority-card">
+                    <div class="authority-score">8</div>
+                    <div class="authority-name">Authority Name</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="authority-card">
+                    <div class="authority-score">9</div>
+                    <div class="authority-name">Another Authority</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="authority-card">
+                    <div class="authority-score">7</div>
+                    <div class="authority-name">Sample Authority</div>
+                </div>
+            </div>
+            <!--{% endfor %}-->
+        </div>
+
+        <div class="text-center mt-3">
+            <a href="javascript:history.back()" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+
+</html>

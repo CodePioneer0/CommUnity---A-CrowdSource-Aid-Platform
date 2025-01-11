@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Creation Form</title>
+    <style>
+        body {
+            font: 1em sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fa;
+        }
+
+        /* Container for the form */
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* Label and Input styling */
+        .form-container label {
+            font-size: 1.1em;
+            color: #555;
+            margin-top: 15px;
+            display: block;
+        }
+
+        .form-container input,
+        .form-container select,
+        .form-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            background-color: #f9f9f9;
+        }
+
+        .form-container textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .button-submit {
+    width: 100%;
+    padding: 14px 0;
+    margin-top: 25px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.button-submit:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.button-submit:active {
+    background-color: #003c82;
+    transform: translateY(2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button-submit:focus {
+    outline: none;
+}
+
+        .add-photo-button {
+            width: 40px;
+            height: 40px;
+            background-color: #007bff;
+            color: white;
+            font-size: 24px;
+            border: none;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-photo-button:hover {
+            background-color: #0056b3;
+        }
+
+        .add-photo-button:focus {
+            outline: none;
+        }
+
+        /* Photo Upload Container Styling */
+        .photo-upload-container {
+            display: flex;
+            flex-direction: column;
+            margin-top: 15px;
+        }
+
+        .photo-upload-container input {
+            margin-bottom: 10px;
+        }
+
+        /* Responsive Design for Mobile Devices */
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 15px;
+            }
+
+            .form-container input,
+            .form-container select,
+            .form-container textarea {
+                padding: 8px;
+                font-size: 0.95em;
+            }
+
+            .form-container button {
+                padding: 10px;
+                font-size: 1em;
+            }
+
+            .add-photo-button {
+                width: 35px;
+                height: 35px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Report an Issue</h2>
+    <form id="issueForm">
+        <label for="issueTitle">Issue Title</label>
+        <input type="text" id="issueTitle" name="issueTitle" required>
+
+        <label for="category">Category</label>
+        <select id="category" name="category" required>
+            <option value="traffic">Traffic</option>
+            <option value="cleanliness">Cleanliness</option>
+            <option value="electricity">Electricity</option>
+            <option value="water">Water Supply</option>
+            <option value="potholes">Potholes</option>
+            <option value="others">Others</option>
+        </select>
+
+        <label for="location">Location (City & Street)</label>
+        <input type="text" id="location" name="location" required>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <div class="photo-upload-container" id="photoUploadContainer">
+            <label for="photos">Add Photos</label>
+            <input type="file" name="photos" accept="image/*">
+        </div>
+
+        <button type="button" class="add-photo-button" onclick="addPhotoInput()">+</button>
+
+        <button type="submit" class="button-submit">Submit Issue</button>
+    </form>
+</div>
+
+<script>
+    function addPhotoInput() {
+        var container = document.getElementById('photoUploadContainer');
+        var newInput = document.createElement('input');
+        newInput.type = 'file';
+        newInput.name = 'photos';
+        newInput.accept = 'image/*';
+        container.appendChild(newInput);
+    }
+
+    document.getElementById('issueForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Handle form submission here, such as sending the data to a server
+        alert('Issue submitted successfully!');
+    });
+</script>
+
+</body>
+</html>
