@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Chatbot</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 350px;
+            max-width: 90%;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-header {
+            background: #6200ea;
+            color: #fff;
+            padding: 0.8em;
+            text-align: center;
+            font-weight: bold;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 1em;
+            overflow-y: auto;
+        }
+        .chat-input {
+            display: flex;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 0.8em;
+            border: none;
+            border-top: 1px solid #ccc;
+            outline: none;
+            font-size: 1em;
+        }
+        .chat-input button {
+            padding: 0.8em 1em;
+            background: #6200ea;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .chat-input button:hover {
+            background: #4500b5;
+        }
+        .message {
+            margin-bottom: 0.5em;
+            animation: fadeInUp 0.4s ease both;
+        }
+        .user {
+            text-align: right;
+            color: #6200ea;
+        }
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Chatbot</div>
+        <div class="chat-messages" id="messages">
+            <!-- Chat messages will go here -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type a message..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const messages = document.getElementById('messages');
+            const text = input.value.trim();
+            if(!text) return;
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.textContent = text;
+            messages.appendChild(userMsg);
+            input.value = '';
+            // Placeholder: Bot reply
+            setTimeout(() => {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'message';
+                botMsg.textContent = "Hello, I'm here to assist you.";
+                messages.appendChild(botMsg);
+                messages.scrollTop = messages.scrollHeight;
+            }, 800);
+        }
+    </script>
+</body>
+</html>

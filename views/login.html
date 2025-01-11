@@ -3,126 +3,230 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/x-icon" href="hi.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://kit.fontawesome.com/97ebf5864.js" crossorigin="anonymous"></script>
-    <link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
-    <link rel="manifest" href="images/favicon/site.webmanifest">
-    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
-    <title>Login</title>
+    <link rel="icon" type="image/x-icon" href="hi.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <title>CommUnity Sphere - Login</title>
 </head>
 
 <body>
     <div class="wholebody">
-        <div class="container" id="container">
-            <div class="form-container sign-up-container">
-                <form action="/authoritylogin" id="authoritylogin" method="post">
-                    <h1>Authority Login</h1>
+        <div class="container">
+            <div class="form-container">
+                <form id="loginForm" method="post">
+                    <h1>Welcome Back!</h1>
+                    <p class="subtitle">Login to your account</p>
+
                     <div class="infield">
+                        <i class="fas fa-user-circle"></i>
                         <input type="text" placeholder="Username" name="username" required />
-                        <label></label>
                     </div>
+
                     <div class="infield">
+                        <i class="fas fa-lock"></i>
                         <input type="password" placeholder="Password" name="password" required />
-                        <label></label>
                     </div>
-                    <input type="submit" value="Login" class="btn">
-                    <p class="signup">New to CommUnity?</p>
-                    <a href="/signup" class="btn">Sign Up</a>
-                    <div class="status" id="authoritydisplay"></div>
-                </form>
-            </div>
-            <div class="form-container sign-in-container">
-                <form action="/userlogin" id="userlogin" method="post">
-                    <h1>User Login</h1>
+
                     <div class="infield">
-                        <input type="text" placeholder="Username" name="username" required />
-                        <label></label>
+                        <i class="fas fa-users-cog"></i>
+                        <select name="role" required>
+                            <option value="">Select Your Role</option>
+                            <option value="citizen">Citizen</option>
+                            <option value="authority">Authority</option>
+                        </select>
                     </div>
-                    <div class="infield">
-                        <input type="password" placeholder="Password" name="password" required />
-                        <label></label>
-                    </div>
-                    <input type="submit" value="Login" class="btn">
-                    <p class="signup">New to CommUnity?</p>
-                    <a href="/signup" class="btn">Sign Up</a>
-                    <div class="status" id="userdisplay"></div>
+
+                    <button type="submit" class="btn login-btn">Login</button>
+
+                    <p class="register-link">New to CommUnity? <a href="/register">Create Account</a></p>
+                    <div class="status" id="statusDisplay"></div>
                 </form>
-            </div>
-            <div class="overlay-container" id="overlayCon">
-                <div class="overlay">
-                    <div class="overlay-panel overlay-left">
-                        <h1>Welcome Back!</h1>
-                        <p>Want to report an Issue?</p>
-                        <button>User Login</button>
-                    </div>
-                    <div class="overlay-panel overlay-right">
-                        <h1>Welcome Back!</h1>
-                        <p>Want to resolve Issues?</p>
-                        <button>Authority Login</button>
-                    </div>
-                </div>
-                <button id="overlayBtn"></button>
             </div>
         </div>
     </div>
+
     <script>
-        const container = document.getElementById('container');
-        const overlayBtn = document.getElementById('overlayBtn');
-        const userlogin = document.getElementById('userlogin');
-        const authoritylogin = document.getElementById('authoritylogin');
-        const displayuser = document.getElementById("userdisplay");
-        const displayauthority = document.getElementById("authoritydisplay");
+        const form = document.getElementById('loginForm');
+        const statusDisplay = document.getElementById('statusDisplay');
 
-        overlayBtn.addEventListener('click', () => {
-            container.classList.toggle('right-panel-active');
-        });
-
-        userlogin.addEventListener("submit", async (e) => {
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const formData = new FormData(userlogin);
-            const data = Object.fromEntries(formData.entries());
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
 
-            const response = await fetch("/userlogin", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
-            const result = await response.json();
+            try {
+                const response = await fetch("/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                });
 
-            if (result.status === 1) {
-                displayuser.innerHTML = "Login successful";
-                setTimeout(() => { window.location.href = "/profile"; }, 1000);
-            } else {
-                displayuser.innerHTML = result.error === "email" ? "Email not registered. Try signup" : "Wrong password";
-            }
-        });
+                const result = await response.json();
 
-        authoritylogin.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const formData = new FormData(authoritylogin);
-            const data = Object.fromEntries(formData.entries());
+                if (result.status === 1) {
+                    // Store user data in localStorage
+                    localStorage.setItem('user', JSON.stringify(result.user));
 
-            const response = await fetch("/authoritylogin", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
-            const result = await response.json();
-
-            if (result.status === 1) {
-                displayauthority.innerHTML = "Login successful";
-                setTimeout(() => { window.location.href = "/authoritypage"; }, 1000);
-            } else {
-                displayauthority.innerHTML = result.error === "email" ? "Email not registered. Try signup" : "Wrong password";
+                    statusDisplay.innerHTML = result.message;
+                    statusDisplay.className = "status success";
+                    setTimeout(() => {
+                        window.location.href = result.redirectUrl;
+                    }, 1000);
+                } else {
+                    statusDisplay.innerHTML = result.error;
+                    statusDisplay.className = "status error";
+                }
+            } catch (error) {
+                statusDisplay.innerHTML = "An error occurred during login";
+                statusDisplay.className = "status error";
             }
         });
     </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .wholebody {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25);
+            padding: 2rem;
+            width: 100%;
+            max-width: 450px;
+            margin: 20px;
+        }
+
+        .form-container {
+            padding: 1rem;
+        }
+
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .infield {
+            position: relative;
+            margin: 1.5rem 0;
+        }
+
+        .infield i {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #718096;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .login-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .register-link {
+            text-align: center;
+            margin: 1.5rem 0;
+            color: #4a5568;
+        }
+
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .status.success {
+            background-color: #c6f6d5;
+            color: #2f855a;
+        }
+
+        .status.error {
+            background-color: #fed7d7;
+            color: #c53030;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </body>
 
 </html>
