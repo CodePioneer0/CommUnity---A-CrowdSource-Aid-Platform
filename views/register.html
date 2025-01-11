@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="hi.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://kit.fontawesome.com/97ebf5864.js" crossorigin="anonymous"></script>
+    <link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
+    <link rel="manifest" href="images/favicon/site.webmanifest">
+    <title>The CommUnity Sphere</title>
+</head>
+
+<body>
+    <div class="wholebody">
+        <div class="container" id="container">
+            <div class="form-container sign-up-container">
+                <form action="/authoritysignup" id="authoritysignup" method="post">
+                    <h1>Authority SignUp</h1>
+                    <div class="infield">
+                        <input type="text" placeholder="Name of the Authority" name="name" required />
+                    </div>
+                    <div class="infield">
+                        <input type="email" placeholder="Email-ID" name="email" required />
+                    </div>
+                    <div class="infield">
+                        <input type="text" placeholder="Username" name="username" required />
+                    </div>
+                    <div class="infield">
+                        <input type="password" placeholder="Password" name="password" required />
+                    </div>
+                    <input type="submit" value="SignUp" class="btn">
+                    <p class="signup">User of CommUnity?</p>
+                    <a href="/login" class="btn">Login</a>
+                    <div class="status" id="authoritydisplay"></div>
+                </form>
+            </div>
+            <div class="form-container sign-in-container">
+                <form action="/usersignup" id="usersignup" method="post">
+                    <h1>User SignUp</h1>
+                    <div class="infield">
+                        <input type="text" placeholder="Name" name="name" required />
+                    </div>
+                    <div class="infield">
+                        <input type="email" placeholder="Email" name="email" required />
+                    </div>
+                    <div class="infield">
+                        <input type="text" placeholder="Username" name="username" required />
+                    </div>
+                    <div class="infield">
+                        <input type="password" placeholder="Password" name="password" required />
+                    </div>
+                    <input type="submit" value="SignUp" class="btn">
+                    <p class="signup">User of CommUnity?</p>
+                    <a href="/login" class="btn">Login</a>
+                    <div class="status" id="userdisplay"></div>
+                </form>
+            </div>
+            <div class="overlay-container" id="overlayCon">
+                <div class="overlay">
+                    <div class="overlay-panel overlay-left">
+                        <h1>Hello !</h1>
+                        <p>Want to report an Issue?</p>
+                        <button>User SignUp</button>
+                    </div>
+                    <div class="overlay-panel overlay-right">
+                        <h1>Hello !</h1>
+                        <p>Do you want to resolve Issues ?</p>
+                        <button>Authority SignUp</button>
+                    </div>
+                </div>
+                <button id="overlayBtn"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('container');
+        const overlayBtn = document.getElementById('overlayBtn');
+
+        overlayBtn.addEventListener('click', () => {
+            container.classList.toggle('right-panel-active');
+        });
+
+        async function handleSubmit(form, endpoint, displayElement) {
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                let formData = new FormData(form);
+                const data = {};
+                formData.forEach((value, key) => data[key] = value);
+
+                let response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                let result = await response.json();
+
+                if (result.status === 1) {
+                    displayElement.innerHTML = "Signup successful";
+                    setTimeout(() => {
+                        window.location.href = form.action === "/usersignup" ? "/profile" : "/authoritypage";
+                    }, 1000);
+                } else {
+                    displayElement.innerHTML = result.error === "email" ? "Email already registered, try login" : "Username already exists";
+                }
+            });
+        }
+
+        handleSubmit(document.getElementById('usersignup'), "/usersignup", document.getElementById("userdisplay"));
+        handleSubmit(document.getElementById('authoritysignup'), "/authoritysignup", document.getElementById("authoritydisplay"));
+    </script>
+</body>
+
+</html>
