@@ -1,119 +1,53 @@
-import express from "express";
-import UserModel from "../models/userModel.js";
-import path from "path";
-import { fileURLToPath } from "url";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+// filepath: routers/authRouter.js
+import express from 'express';
+import bcrypt from 'bcrypt';
+import User from '../models/userModel.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const authRouter = express.Router();
 
-authRouter.route("/register").get(getSignUp).post(postSignUp);
+authRouter.route("/register").get(getRegister).post(postRegister);
 authRouter.route("/login").get(getLogin).post(postLogin);
-authRouter.get("/logout", handleLogout);
 
-function getSignUp(req, res) {
-  const projectRoot = path.join(__dirname, "..");
-  res.sendFile(path.join(projectRoot, "views", "register.html"));
+function getRegister(req, res) {
+    res.sendFile(path.join(__dirname, "../views", "register.html"));
 }
 
-async function postSignUp(req, res) {
-  try {
-    let dataObj = req.body;
-    let user = await UserModel.create(dataObj);
-    if (user) {
-      // Send a JSON response with status and redirect URL
-      res.status(201).json({
-        status: 1,
-        message: "User created successfully",
-        redirectUrl: "/login",
-      });
-    } else {
-      res.status(400).json({
-        status: 0,
-        error: "Failed to create user",
-      });
+async function postRegister(req, res) {
+    try {
+        const { name, email, username, password, role } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({ name, email, username, password: hashedPassword, role });
+        await newUser.save();
+        res.status(201).json({ status: 1, message: "User created successfully", redirectUrl: "/login" });
+    } catch (error) {
+        res.status(500).json({ status: 0, error: "Error creating user" });
     }
-  } catch (error) {
-    console.error("Signup error:", error);
-    res.status(500).json({
-      status: 0,
-      error: "Error creating user",
-    });
-  }
 }
+
 function getLogin(req, res) {
-  const projectRoot = path.join(__dirname, "..");
-  res.sendFile(path.join(projectRoot, "views", "login.html"));
+    res.sendFile(path.join(__dirname, "../views", "login.html"));
 }
+
 async function postLogin(req, res) {
-  try {
-    const { username, password, role } = req.body;
-    const user = await UserModel.findOne({ username });
-
-    if (!user) {
-      return res.status(401).json({
-        status: 0,
-        error: "User not found",
-      });
+    try {
+        const { username, password } = req.body;
+        const user = await User.findOne({ username });
+        if (!user) {
+            return res.status(400).json({ status: 0, error: "Invalid username or password" });
+        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ status: 0, error: "Invalid username or password" });
+        }
+        res.status(200).json({ status: 1, message: `Welcome ${user.role}`, redirectUrl: user.role === 'citizen' ? '/citizen_dashboard' : '/authority_dashboard' });
+    } catch (error) {
+        res.status(500).json({ status: 0, error: "Error logging in" });
     }
-
-    if (user.password === password && user.role === role) {
-      // Create a session object with user data
-      req.session = {
-        isLoggedIn: true,
-        username: user.username,
-        role: user.role,
-        name: user.name,
-      };
-
-      res.status(200).json({
-        status: 1,
-        message: "Login successful",
-        user: {
-          name: user.name,
-          username: user.username,
-          role: user.role,
-        },
-        redirectUrl:
-          user.role === "citizen"
-            ? "/citizen_dashboard"
-            : "/authority_dashboard",
-      });
-    } else {
-      res.status(401).json({
-        status: 0,
-        error: "Invalid credentials",
-      });
-    }
-  } catch (err) {
-    console.error("Login error:", err);
-    res.status(500).json({
-      status: 0,
-      error: "Server error",
-    });
-  }
-}
-
-async function handleLogout(req, res) {
-  try {
-    // Clear the session
-    req.session = null;
-
-    res.status(200).json({
-      status: 1,
-      message: "Logged out successfully",
-      redirectUrl: "/login",
-    });
-  } catch (error) {
-    console.error("Logout error:", error);
-    res.status(500).json({
-      status: 0,
-      error: "Error during logout",
-    });
-  }
 }
 
 export default authRouter;

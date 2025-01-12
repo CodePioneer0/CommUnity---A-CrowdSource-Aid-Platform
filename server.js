@@ -1,13 +1,19 @@
 import express from "express";
 import mongoose from "mongoose";
 import authRouter from "./routers/authRouter.js";
-
+import dashboardRouter from "./routers/dashboardRouter.js";
+import issueRouter from "./routers/issueRouter.js";
+import feedbackRouter from "./routers/feedbackRouter.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+mongoose
+  .connect('mongodb+srv://admin:sayak@cluster0.zyemj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error(`MongoDB connection error: ${err}`));
 const app = express();
 
 // Middleware for parsing JSON bodies
@@ -17,55 +23,27 @@ app.use(express.static("views"));
 
 // Home route
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "home.html"));
+    res.sendFile(path.join(__dirname, "views", "home.html"));
 });
 
 // Mount the routers
 app.use("/", authRouter);
-app.get("/citizen_dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "citizen_dashboard.html"));
-});
-
-app.get("/authority_dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "authority_dashboard.html"));
-});
-
-app.get("/logout", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "login.html"));
-});
-app.get("/citizen_dashboard/report", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "create_issue.html"));
-});
-app.get("/citizen_dashboard/view-upvote-issues", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "view_issues.html"));
-});
-app.get("/citizen_dashboard/track", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "track_performance.html"));
-});
-app.get("/citizen_dashboard/submit-feedback", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "view_feedback.html"));
-});
-app.get("/citizen_dashboard/chatbot", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "chatbot.html"));
-});
-app.get("/citizen_dashboard/view-authority-scores", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "view_score.html"));
-});
-app.get("/authority_dashboard/view-issues", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "view_issues.html"));
-});
-app.get("/authority_dashboard/view-feedback", (req, res) => { 
-  res.sendFile(path.join(__dirname, "views", "view_feedback.html"));
-});
-app.get("/authority_dashboard/analyze-resolution", (req, res) => { 
-  res.sendFile(path.join(__dirname, "views", "track_performance.html"));
-});
-app.get("/authority_dashboard/view-performance-scores", (req, res) => { 
-  res.sendFile(path.join(__dirname, "views", "view_score.html"));
-});
+app.use("/", dashboardRouter);
+app.use("/", issueRouter);
+app.use("/", feedbackRouter);
 
 const PORT = 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// Add error handling for port in use
+const server = app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use`);
+        process.exit(1);
+    } else {
+        throw err;
+    }
 });

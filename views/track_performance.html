@@ -63,11 +63,7 @@
                             const resolvedCounts = [];
                             const unresolvedCounts = [];
 
-                            {% for location_data in location_issues %}
-                                locations.push("{{ location_data.location }}"); // Adding location
-                                resolvedCounts.push({{ location_data.resolved }}); // Adding resolved count
-                                unresolvedCounts.push({{ location_data.unresolved }}); // Adding unresolved count
-                            {% endfor %}
+                            
 
                             // Get the context for the chart
                             const ctx = document.getElementById('issuesChart').getContext('2d');

@@ -73,10 +73,7 @@
         const issueTitles = [];
         const averageRatings = [];
 
-        {% for data in issue_ratings %}
-            issueTitles.push("{{ data.issue_title }}");
-            averageRatings.push({{ data.average_rating }});
-        {% endfor %}
+        
 
         // Bar Chart: Average Ratings per Issue
         const feedbackCtx = document.getElementById('feedbackChart').getContext('2d');
@@ -116,9 +113,7 @@
         const ratings = ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'];
         const ratingCounts = [];
 
-        {% for count in rating_distribution %}
-            ratingCounts.push({{ count }});
-        {% endfor %}
+        
 
         // Pie Chart: Rating Distribution
         const ratingCtx = document.getElementById('ratingPieChart').getContext('2d');
