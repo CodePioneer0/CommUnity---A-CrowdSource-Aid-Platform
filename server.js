@@ -11,7 +11,7 @@ import dotenv from "dotenv";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+const app = express();
 // Enable CORS
 app.use(cors());
 
@@ -24,7 +24,7 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error(`MongoDB connection error: ${err}`));
 
-const app = express();
+
 
 // Middleware
 app.use(express.json());
